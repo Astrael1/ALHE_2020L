@@ -5,21 +5,20 @@ import reader as rd
 import math
 
 class ACO:
-    def __init__(self,city1, city2 ,ants_num, t = 'qas', qas = 1,iteration_num = 3,rho = 0.5, alpha = 1, beta = 1):
-        self.distances = rd.getGraphFromFile("germany50.txt")[1]
+    def __init__(self,city1, city2 ,ants_num, t = 'qas', qas = 1,iteration_num = 3,rho = 0.5, alpha = 1, beta = 1, verbosity = 0):
         self.ants_num = ants_num
         self.iteration_num = iteration_num
         self.best_ants = ants_num # number of best ants
         self.rho = rho # pr-stwo wyparowania pheromones
         self.alpha = alpha
         self.beta = beta
-        self.pheromones = rd.getGraphFromFile("germany50.txt")[2] 
-        self.eta = rd.getGraphFromFile("germany50.txt")[3] # 1 / distances
         self.city1 = city1
         self.city2 = city2
-        self.cities = rd.getGraphFromFile("germany50.txt")[4]
+        self.graph, self.distances, self.pheromones, self.eta, self.cities = rd.getGraphFromFile("germany50.txt")
         self.type = t
         self.q_qas = qas
+        self.verbosity = verbosity
+
 
     def aco_run(self):
         path = None
@@ -42,7 +41,7 @@ class ACO:
 
         # choosing duplicated best paths
         best = sorted(best_paths , key = lambda x: x[1])
-        print(best)
+        # print("Best paths", best)
         return best[:2]
    
     def find_paths(self):
@@ -73,7 +72,7 @@ class ACO:
             # ant found the end 
             if nex[1] == end:
                 path.append((prev,nex[0]))
-                print(" Found it ")
+                # print(" Found it ")
                 break
 
             path.append((prev,nex[0]))
@@ -90,13 +89,13 @@ class ACO:
         nominator = ph ** self.alpha * (eta ** self.beta)
         dominator = nominator.values.sum()
         prob = nominator / dominator
-        print("nom : {} pheromone : {} dominator {}".format(nominator, ph, dominator))
-        print(prob)
+        # print("nom : {} pheromone : {} dominator {}".format(nominator, ph, dominator))
+        # print(prob)
         if math.isnan(float((prob[0]))):
-            print(" Error ") 
+            # print(" Error ") 
             return 7
         nex = np.random.choice( range(len(self.cities)) ,1, p = prob)[0]
-        print(nex)
+        # print(nex)
         return self.cities[nex] , nex
         
     def count_distance(self, path):
