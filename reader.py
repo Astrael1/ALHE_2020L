@@ -14,8 +14,8 @@ def getGraphFromFile(file_path):
     cities = []
     # 
     # turninig on options to see all information in DataFrame
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
+    # pd.set_option('display.max_rows', None)
+    # pd.set_option('display.max_columns', None)
 
     # extract node section
     node_section = content[content.find("NODES"):content.find("LINK")]
@@ -46,17 +46,17 @@ def getGraphFromFile(file_path):
         dx = x2 - x1
         dy = y2 - y1
         edge_length = math.sqrt( dx ** 2 + dy ** 2 )
-        graph.add_weighted_edges_from([(link[0], link[1], edge_length)])
+        graph.add_edge(link[0],link[1])
+        graph[link[0]][link[1]]['weight'] = edge_length
+        graph[link[0]][link[1]]['pheromone'] = 1
+        # graph.add_weighted_edges_from([(link[0], link[1], edge_length)])
     # 
     # distance dataframe
-    df = nx.to_pandas_adjacency(graph)
-    df = df.replace(0,np.inf)
+    df = nx.to_pandas_adjacency(graph, weight='weight', nonedge=np.inf)
+    
     
     # beginnine pheromone amount for each city in dataframe
-    pheromone =  df.copy()
-    pheromone [pheromone < np.inf] = 1
-    pheromone = pheromone.replace(np.inf ,0)
-    print(pheromone)
+    pheromone = nx.to_pandas_adjacency(graph, weight='pheromone', nonedge=0)
     #
     # or all matrix with ones
     # pheromone = pd.DataFrame( 1 , index = cities , columns = cities)
