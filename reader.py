@@ -69,6 +69,11 @@ def getGraphFromFile(file_path):
 
 # getGraphFromFile("germany50.txt")
 # print(getGraphFromFile("germany50.txt")[1])
-# nx.draw(getGraphFromFile("germany50.txt")[0], with_labels = True)
+
+
+# ----------------------drawing graph (for future use)------------------------------
+# graph, df, pheromone, eta, cities = getGraphFromFile('germany50.txt')
+# nx.draw_kamada_kawai(graph, nodelist=cities, with_labels=True)
 # pl.draw()
+# pl.savefig('graph.png')
 # pl.show()

@@ -13,5 +13,7 @@ print("Calculating path from {} to {} with algorithm ."
     .format(args.city_1, args.city_2)) #   I will store it in {}  , args.type , args.output_path
 
 #  python3 program.py  Kempten Wuerzburg 
-aco = ACO(args.city_1, args.city_2, 10)
-print(aco.aco_run())
+aco = ACO(args.city_1, args.city_2, 10, verbosity=1, max_paths=100)
+solution = aco.aco_run()
+for path in solution:
+    print(path)
