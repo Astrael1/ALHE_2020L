@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import reader as rd
 import math
+import matplotlib.pyplot as pl
+import networkx as nx
 
 class ACO:
     def __init__(self,city1, city2 ,ants_num, t = 'qas', qas = 1,iteration_num = 3,rho = 0.5, alpha = 1, beta = 1, verbosity = 0, max_paths=2):
@@ -19,6 +21,7 @@ class ACO:
         self.q_qas = qas
         self.verbosity = verbosity
         self.max_paths = max_paths
+        self.frame_counter = 0
 
 
     def aco_run(self):
@@ -59,6 +62,9 @@ class ACO:
         for i in range(self.ants_num):
             path = self.find_path(cities)
             paths.append((path, self.count_distance(path)))
+            if self.frame_counter == 0:
+                self.visualize(path, self.frame_counter)
+                self.frame_counter += 1
         return paths 
 
     def find_path(self, city):
@@ -127,5 +133,30 @@ class ACO:
                     self.pheromones[city1][city2] += self.eta[city[0]][city[1]]
                 else:
                     self.pheromones[city1][city2] += self.q_qas
+        self.update_graph()
 
+    def update_graph(self):
+        for edge in self.graph.edges:
+            self.graph.edges[edge]['pheromone'] = self.pheromones[edge[0]][edge[1]]
+
+    def visualize(self, path, frameNumber):
+        layout = nx.kamada_kawai_layout(self.graph)
+        nx.draw_networkx(
+            self.graph,
+            pos=layout, 
+            nodelist=self.cities, 
+            with_labels=False,
+            node_color='#ffaa77',
+            node_shape='o')
+        nx.draw_networkx(
+            self.graph,
+            pos=layout, 
+            nodelist=path, 
+            with_labels=True,
+            node_color='#ff0000',
+            node_shape='o')
+        pl.draw()
+        # open('results/'+str(frameNumber)+'.png', "w+")
+        # TODO colorful edges, save to directory
+        pl.savefig(str(frameNumber)+'.png')
     

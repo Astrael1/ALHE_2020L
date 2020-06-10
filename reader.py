@@ -45,7 +45,8 @@ def getGraphFromFile(file_path):
         y2 = float(coords[link[1]]["y"])
         dx = x2 - x1
         dy = y2 - y1
-        edge_length = math.sqrt( dx ** 2 + dy ** 2 )
+        degree_to_km = 73
+        edge_length = math.sqrt( dx ** 2 + dy ** 2 ) * degree_to_km
         graph.add_edge(link[0],link[1])
         graph[link[0]][link[1]]['weight'] = edge_length
         graph[link[0]][link[1]]['pheromone'] = 1
@@ -73,7 +74,24 @@ def getGraphFromFile(file_path):
 
 # ----------------------drawing graph (for future use)------------------------------
 # graph, df, pheromone, eta, cities = getGraphFromFile('germany50.txt')
-# nx.draw_kamada_kawai(graph, nodelist=cities, with_labels=True)
+
+# nx.draw_networkx(
+#     graph,
+#     pos=nx.kamada_kawai_layout(graph),
+#     edge_list=[], 
+#     nodelist=cities, 
+#     with_labels=False,
+#     node_color='#ffaa77',
+#     node_shape='o')
+
+# nx.draw_networkx(
+#     graph,
+#     pos=nx.kamada_kawai_layout(graph), 
+#     nodelist=cities, 
+#     with_labels=True,
+#     font_size=9,
+#     node_color='#ff0000',
+#     node_shape='2')
 # pl.draw()
-# pl.savefig('graph.png')
+# pl.savefig('result.png')
 # pl.show()
