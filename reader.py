@@ -74,7 +74,6 @@ def getGraphFromFile(file_path):
 
 # ----------------------drawing graph (for future use)------------------------------
 # graph, df, pheromone, eta, cities = getGraphFromFile('germany50.txt')
-
 # nx.draw_networkx(
 #     graph,
 #     pos=nx.kamada_kawai_layout(graph),
