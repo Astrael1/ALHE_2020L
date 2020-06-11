@@ -29,7 +29,7 @@ aco = ACO(
     max_paths=100,
     shouldVisualize=args.visualize,
     type = args.type,
-    qas=10
+    qas=1
     )
 
 t1_start = process_time()  

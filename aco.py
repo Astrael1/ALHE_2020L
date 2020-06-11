@@ -54,6 +54,8 @@ class ACO:
                 print(f"Iteration {i} running:")
             paths = self.find_paths()
             self.update_pheromone(paths, self.best_ants)
+            if(self.shouldVisualize):
+                self.visualize(None)
             #print(paths)
             #ignore paths that don't finish with target city
             correct_paths = [path for path in paths if path[0][-1] == self.city2 and path not in best_paths]
@@ -158,6 +160,7 @@ class ACO:
         # make directional graph with path to show
         
         edge_colors = self.getEdgeColors(self.graph)
+        edge_width = self.getEdgeWidth(self.graph)
         
         # draw
         pl.figure(1, figsize=(10,10))
@@ -168,6 +171,7 @@ class ACO:
             font_size=7,
             node_color='#ffaa77',
             edge_color=edge_colors,
+            width=edge_width,
             node_shape='o')
         if path != None:
             path_graph = nx.DiGraph()
@@ -188,6 +192,9 @@ class ACO:
 
     def getEdgeColors(self, graph):
         return [self.pheromoneToColor(edge) for edge in graph.edges]
+    def getEdgeWidth(self, graph):
+        return [self.pheromoneToWidth(edge) for edge in graph.edges]
+
     def pheromoneToColor(self, edge):
         pheromone = self.graph[edge[0]][edge[1]]['pheromone']
         borders = {
@@ -199,7 +206,22 @@ class ACO:
             6: '#eeddcc'
             }
         for key,value in borders.items():
-            if(pheromone < key): return value
+            if(pheromone < key): 
+                return value
         return '#ff0000'
+    def pheromoneToWidth(self, edge):
+        pheromone = self.graph[edge[0]][edge[1]]['pheromone']
+        borders = {
+            1: 1.0, 
+            2: 2.0,
+            3: 3.0,
+            4: 4.0,
+            5: 5.0,
+            6: 6.0
+            }
+        for key,value in borders.items():
+            if(pheromone < key): 
+                return value
+        return 7.0
 
     
