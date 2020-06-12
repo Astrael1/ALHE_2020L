@@ -26,7 +26,6 @@ aco = ACO(
     ants_num=args.ants,
     iteration_num=args.iterations,
     verbosity = args.verbose, 
-    max_paths=100,
     shouldVisualize=args.visualize,
     type = args.type,
     qas=1

@@ -13,8 +13,9 @@ class ACO:
     ants_num, 
     type = 'das', 
     qas = 1,
+    das = 1,
     iteration_num = 3,
-    rho = 0.5, 
+    rho = 0.9, 
     alpha = 1, 
     beta = 1, 
     verbosity = 0, 
@@ -22,7 +23,6 @@ class ACO:
     shouldVisualize=False):
         self.ants_num = ants_num
         self.iteration_num = iteration_num
-        #self.best_ants = ants_num # number of best ants
         self.rho = rho # pr-stwo wyparowania pheromones
         self.alpha = alpha
         self.beta = beta
@@ -31,8 +31,9 @@ class ACO:
         self.graph, self.distances, self.pheromones, self.eta, self.cities = rd.getGraphFromFile("germany50.txt")
         self.type = type
         self.q_qas = qas
+        self.q_das = das
         self.verbosity = verbosity
-        self.max_paths = max_paths
+        self.max_paths = 2
         self.frame_counter = 0
         self.shouldVisualize = shouldVisualize
 
@@ -47,8 +48,13 @@ class ACO:
                 print(f"Iteration {i} running:")
             paths = self.find_paths()
             correct_paths = [path for path in paths if path[0][-1] == self.city2]
+            print("Iteration {} paths: {}".format(i, correct_paths))
 
-            self.update_pheromone(correct_paths, self.best_ants)
+            if(self.shouldVisualize):
+                for path in correct_paths:
+                    self.visualize(path[0])
+
+            self.update_pheromone(correct_paths)
             if(self.shouldVisualize):
                 self.visualize(None)
 
@@ -71,9 +77,7 @@ class ACO:
         cities = [self.city1, self.city2]
         for i in range(self.ants_num):
             path = self.find_path(cities)
-        paths.append((path, self.count_distance(path)))
-            if self.shouldVisualize:
-                self.visualize(path)
+            paths.append((path, self.count_distance(path)))
         return paths 
 
     def find_path(self, city):
@@ -94,11 +98,13 @@ class ACO:
             # ant could not find the way
             if nex == -1:
                 break
+
             if nex == end:
                 path.append(nex)
                 if(self.verbosity >= 2):
                     print(" Found it ")
                 break
+
             path.append(nex)
             taboo[prev][nex] = 0
             taboo[nex][prev] = 0
@@ -127,15 +133,14 @@ class ACO:
 
     def update_pheromone(self, paths):
         sort_paths = sorted(paths , key = lambda x: x[1])
-        for path , distance in sort_paths[:best_ants]:
+        for path , distance in sort_paths:
             for i in range(len(path)-1):
                 city1 = path[i]
                 city2 = path[i+1]
                 if self.type == 'das':
-                    delta = self.eta[city1][city2]
-                    self.pheromones[city1][city2] += delta
+                    self.pheromones[city1][city2] += self.q_das
                 else:
-                    self.pheromones[city1][city2] += self.q_qas
+                    self.pheromones[city1][city2] += self.q_qas * self.eta[city1][city2]
         self.update_graph()
 
     def update_graph(self):
