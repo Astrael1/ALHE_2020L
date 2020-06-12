@@ -4,6 +4,15 @@ import math
 import matplotlib.pyplot as pl
 import pandas as pd
 from scipy.spatial import distance_matrix
+from geopy.distance import geodesic
+
+def to_xy(lat, lon ):
+    r = 6371
+    lam = lat
+    phi = lon
+    cos_phi_0 = math.cos(math.radians(lon))
+    return r * math.radians(lam) * cos_phi_0, r * math.radians(phi)
+
 
 def getGraphFromFile(file_path):
     file = open(file_path, "r")
@@ -14,8 +23,8 @@ def getGraphFromFile(file_path):
     cities = []
     # 
     # turninig on options to see all information in DataFrame
-    # pd.set_option('display.max_rows', None)
-    # pd.set_option('display.max_columns', None)
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
 
     # extract node section
     node_section = content[content.find("NODES"):content.find("LINK")]
@@ -35,26 +44,33 @@ def getGraphFromFile(file_path):
     link_section = content[content.find("LINKS"):content.find("DEMAND")]
     link_section = link_section[link_section.find("(") + 1: link_section.rfind(")")]
     links = link_section.split('\n')[1:-1]
-
+    #print(links)
     for link in links:
         link = link[ link.find("(")+1: link.find(")")].split(' ')[1:-1]
         # print(coords[link[0]]["x"])
-        x1 = float(coords[link[0]]["x"])
-        y1 = float(coords[link[0]]["y"])
-        x2 = float(coords[link[1]]["x"])
-        y2 = float(coords[link[1]]["y"])
+ 
+        lon1 = float(coords[link[0]]["x"]) # lon
+        lat1 = float(coords[link[0]]["y"]) # lat
+        x1, y1 = to_xy(lat1,lon1)
+
+        lon2 = float(coords[link[1]]["x"])
+        lat2 = float(coords[link[1]]["y"])
+        x2, y2 = to_xy(lat2,lon2)
+       
         dx = x2 - x1
         dy = y2 - y1
+        edge_real_distance = geodesic((lat1,lon1), (lat2,lon2)).kilometers
         edge_length = math.sqrt( dx ** 2 + dy ** 2 )
         graph.add_edge(link[0],link[1])
         graph[link[0]][link[1]]['weight'] = edge_length
+        graph[link[0]][link[1]]['distance'] = edge_real_distance
         graph[link[0]][link[1]]['pheromone'] = 1
         # graph.add_weighted_edges_from([(link[0], link[1], edge_length)])
     # 
     # distance dataframe
     df = nx.to_pandas_adjacency(graph, weight='weight', nonedge=np.inf)
-    
-    
+    real_distance = nx.to_pandas_adjacency(graph, weight='distance', nonedge=np.inf)
+    # print(df)
     # beginnine pheromone amount for each city in dataframe
     pheromone = nx.to_pandas_adjacency(graph, weight='pheromone', nonedge=0)
     #
@@ -64,10 +80,10 @@ def getGraphFromFile(file_path):
     # beginning eta amount for each citi in dataframe
     eta = 1 /df 
     
-    return graph, df , pheromone ,eta , cities
+    return graph, df , pheromone ,eta , cities , real_distance
 
 
-# getGraphFromFile("germany50.txt")
+getGraphFromFile("germany50.txt")
 # print(getGraphFromFile("germany50.txt")[1])
 # nx.draw(getGraphFromFile("germany50.txt")[0], with_labels = True)
 # pl.draw()
