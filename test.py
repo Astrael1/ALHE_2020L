@@ -7,8 +7,8 @@ from time import process_time
 
 class TestAco(unittest.TestCase):
     def test_def_das_qas(self):
-        aco_das = aco.ACO('Kempten','Wuerzburg' , 10,3, 'das')
-        aco_qas =aco.ACO('Kempten','Wuerzburg' , 10,3,'qas')
+        aco_das = aco.ACO('Kempten','Wuerzburg' , ants_num=10 ,iteration_num=3,type='das')
+        aco_qas =aco.ACO('Kempten','Wuerzburg' , ants_num=10 ,iteration_num=3,type='qas')
         t1_start = process_time()  
         aco_das.aco_run()
         t1_stop = process_time() 
