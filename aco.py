@@ -22,7 +22,7 @@ class ACO:
     shouldVisualize=False):
         self.ants_num = ants_num
         self.iteration_num = iteration_num
-        self.best_ants = ants_num # number of best ants
+        #self.best_ants = ants_num # number of best ants
         self.rho = rho # pr-stwo wyparowania pheromones
         self.alpha = alpha
         self.beta = beta
@@ -42,19 +42,10 @@ class ACO:
         best_paths = []
         if self.verbosity >= 2:
             print(f"Looking for path from {self.city1} to {self.city2}")
-
-        # end = self.cities.index(self.city2)
-        # start = self.cities.index(self.city1)
-        
-        # self.pheromones = self.pheromones[start].replace(1, 5)
-        # self.pheromones = self.pheromones[end].replace(1,5)
-
         for i in range(self.iteration_num):
             if self.verbosity >= 2:
                 print(f"Iteration {i} running:")
             paths = self.find_paths()
-            #print(paths)
-            #ignore paths that don't finish with target city
             correct_paths = [path for path in paths if path[0][-1] == self.city2]
 
             self.update_pheromone(correct_paths, self.best_ants)
@@ -69,10 +60,10 @@ class ACO:
             # jeżeli powtarza się w best weź inny w paths?
             # evaporate pheromone
             self.pheromones * (1 - self.rho)
+            # print(self.pheromones)
 
-        # choosing duplicated best paths
+        # not choosing duplicated best paths
         best = sorted(best_paths , key = lambda x: x[1])
-        # print("Best paths", best)
         return best[:self.max_paths]
    
     def find_paths(self):
@@ -80,7 +71,7 @@ class ACO:
         cities = [self.city1, self.city2]
         for i in range(self.ants_num):
             path = self.find_path(cities)
-            paths.append((path, self.count_distance(path)))
+        paths.append((path, self.count_distance(path)))
             if self.shouldVisualize:
                 self.visualize(path)
         return paths 
@@ -103,21 +94,15 @@ class ACO:
             # ant could not find the way
             if nex == -1:
                 break
-
-            # print(nex[0])
-            # ant found the end 
             if nex == end:
                 path.append(nex)
                 if(self.verbosity >= 2):
                     print(" Found it ")
                 break
-
             path.append(nex)
             taboo[prev][nex] = 0
             taboo[nex][prev] = 0
-            prev = nex
-               
-        #path.append((prev,self.cities[0]))
+            prev = nex          
         return path
 
     def choose(self, pheromone , eta, taboo):
@@ -126,14 +111,11 @@ class ACO:
         nominator = ph ** self.alpha * (eta ** self.beta)
         dominator = nominator.values.sum()
         prob = nominator / dominator
-        # print("nom : {} pheromone : {} dominator {}".format(nominator, ph, dominator))
-        # print(prob)
+       
         if math.isnan(float((prob[0]))):
-            # print(" Error ") 
+          # print(" Error ") 
             return -1
         nex = np.random.choice( prob.index.array ,1, p = prob)[0]
-        
-        # print(nex)
         return nex
         
     def count_distance(self, path):
@@ -142,7 +124,8 @@ class ACO:
             total += self.distances[path[i]][path[i+1]]
         return total
 
-    def update_pheromone(self, paths, best_ants):
+
+    def update_pheromone(self, paths):
         sort_paths = sorted(paths , key = lambda x: x[1])
         for path , distance in sort_paths[:best_ants]:
             for i in range(len(path)-1):
@@ -190,7 +173,6 @@ class ACO:
                 node_color='#ff0000',
                 node_shape='o')
 
-        # TODO colorful edges
         pl.savefig('results/'+str(self.frame_counter)+'.png', format='png')
         pl.close(1)
         self.frame_counter += 1
