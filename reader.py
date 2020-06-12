@@ -59,18 +59,14 @@ def getGraphFromFile(file_path):
        
         dx = x2 - x1
         dy = y2 - y1
-        edge_real_distance = geodesic((lat1,lon1), (lat2,lon2)).kilometers
-        edge_length = math.sqrt( dx ** 2 + dy ** 2 )
+        edge_real_distance = geodesic((lat1,lon1), (lat2,lon2)).kilometer
         graph.add_edge(link[0],link[1])
-        graph[link[0]][link[1]]['weight'] = edge_length
-        graph[link[0]][link[1]]['distance'] = edge_real_distance
+        graph[link[0]][link[1]]['weight'] = edge_real_distance
         graph[link[0]][link[1]]['pheromone'] = 1
         # graph.add_weighted_edges_from([(link[0], link[1], edge_length)])
     # 
     # distance dataframe
     df = nx.to_pandas_adjacency(graph, weight='weight', nonedge=np.inf)
-    real_distance = nx.to_pandas_adjacency(graph, weight='distance', nonedge=np.inf)
-    # print(df)
     # beginnine pheromone amount for each city in dataframe
     pheromone = nx.to_pandas_adjacency(graph, weight='pheromone', nonedge=0)
     #
@@ -80,11 +76,32 @@ def getGraphFromFile(file_path):
     # beginning eta amount for each citi in dataframe
     eta = 1 /df 
     
-    return graph, df , pheromone ,eta , cities , real_distance
+    return graph, df , pheromone ,eta , cities
 
 
 getGraphFromFile("germany50.txt")
 # print(getGraphFromFile("germany50.txt")[1])
-# nx.draw(getGraphFromFile("germany50.txt")[0], with_labels = True)
+
+
+# ----------------------drawing graph (for future use)------------------------------
+# graph, df, pheromone, eta, cities = getGraphFromFile('germany50.txt')
+# nx.draw_networkx(
+#     graph,
+#     pos=nx.kamada_kawai_layout(graph),
+#     edge_list=[], 
+#     nodelist=cities, 
+#     with_labels=False,
+#     node_color='#ffaa77',
+#     node_shape='o')
+
+# nx.draw_networkx(
+#     graph,
+#     pos=nx.kamada_kawai_layout(graph), 
+#     nodelist=cities, 
+#     with_labels=True,
+#     font_size=9,
+#     node_color='#ff0000',
+#     node_shape='2')
 # pl.draw()
+# pl.savefig('result.png')
 # pl.show()
