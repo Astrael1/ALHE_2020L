@@ -59,7 +59,7 @@ def getGraphFromFile(file_path):
        
         dx = x2 - x1
         dy = y2 - y1
-        edge_real_distance = geodesic((lat1,lon1), (lat2,lon2)).kilometer
+        edge_real_distance = geodesic((lat1,lon1), (lat2,lon2)).kilometers
         graph.add_edge(link[0],link[1])
         graph[link[0]][link[1]]['weight'] = edge_real_distance
         graph[link[0]][link[1]]['pheromone'] = 1
