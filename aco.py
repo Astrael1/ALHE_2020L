@@ -11,7 +11,7 @@ class ACO:
     city1, 
     city2,
     ants_num, 
-    type = 'qas', 
+    type = 'das', 
     qas = 1,
     iteration_num = 3,
     rho = 0.5, 
@@ -53,14 +53,18 @@ class ACO:
             if self.verbosity >= 2:
                 print(f"Iteration {i} running:")
             paths = self.find_paths()
-            self.update_pheromone(paths, self.best_ants)
-            if(self.shouldVisualize):
-                self.visualize(None)
             #print(paths)
             #ignore paths that don't finish with target city
-            correct_paths = [path for path in paths if path[0][-1] == self.city2 and path not in best_paths]
-            if len(correct_paths) != 0:
-                path = min(correct_paths , key = lambda x : x[1])            
+            correct_paths = [path for path in paths if path[0][-1] == self.city2]
+
+            self.update_pheromone(correct_paths, self.best_ants)
+            if(self.shouldVisualize):
+                self.visualize(None)
+
+            unique_paths = [path for path in correct_paths if path not in best_paths]
+
+            if len(unique_paths) != 0:
+                path = min(unique_paths , key = lambda x : x[1])            
                 best_paths.append(path)
             # jeżeli powtarza się w best weź inny w paths?
             # evaporate pheromone
@@ -145,7 +149,8 @@ class ACO:
                 city1 = path[i]
                 city2 = path[i+1]
                 if self.type == 'das':
-                    self.pheromones[city1][city2] += self.eta[city[0]][city[1]]
+                    delta = self.eta[city1][city2]
+                    self.pheromones[city1][city2] += delta
                 else:
                     self.pheromones[city1][city2] += self.q_qas
         self.update_graph()
@@ -199,11 +204,11 @@ class ACO:
         pheromone = self.graph[edge[0]][edge[1]]['pheromone']
         borders = {
             1: '#cccccc', 
-            2: '#ccddcc',
-            3: '#cceecc',
-            4: '#ccffcc',
-            5: '#ddeecc',
-            6: '#eeddcc'
+            2: '#77ca6e',
+            3: '#979b55',
+            4: '#ba6637',
+            5: '#cf4826',
+            6: '#e52815'
             }
         for key,value in borders.items():
             if(pheromone < key): 
