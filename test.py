@@ -6,6 +6,7 @@ from time import process_time
 
 
 class TestAco(unittest.TestCase):
+<<<<<<< HEAD
     def test_def_das_qas_less(self): # rho = 0.5
         aco_das = aco.ACO(
             'Kempten',
@@ -19,6 +20,11 @@ class TestAco(unittest.TestCase):
             ants_num = 50,
             iteration_num = 10,
             type='qas')
+=======
+    def test_def_das_qas(self):
+        aco_das = aco.ACO('Kempten','Wuerzburg' , ants_num=10 ,iteration_num=3,type='das')
+        aco_qas =aco.ACO('Kempten','Wuerzburg' , ants_num=10 ,iteration_num=3,type='qas')
+>>>>>>> 74880719d058cc21fe34633894d6e47447cbaa37
         t1_start = process_time()  
         aco_das.aco_run()
         t1_stop = process_time() 
