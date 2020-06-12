@@ -15,7 +15,7 @@ class ACO:
     qas = 1,
     das = 1,
     iteration_num = 3,
-    rho = 0.9, 
+    rho = 0.5, 
     alpha = 1, 
     beta = 1, 
     verbosity = 0, 
@@ -48,7 +48,7 @@ class ACO:
                 print(f"Iteration {i} running:")
             paths = self.find_paths()
             correct_paths = [path for path in paths if path[0][-1] == self.city2]
-            print("Iteration {} paths: {}".format(i, correct_paths))
+            #print("Iteration {} paths: {}".format(i, correct_paths))
 
             if(self.shouldVisualize):
                 for path in correct_paths:
@@ -140,7 +140,7 @@ class ACO:
                 if self.type == 'das':
                     self.pheromones[city1][city2] += self.q_das
                 else:
-                    self.pheromones[city1][city2] += self.q_qas * self.eta[city1][city2]
+                    self.pheromones[city1][city2] += self.q_qas*self.eta[city1][city2]
         self.update_graph()
 
     def update_graph(self):
