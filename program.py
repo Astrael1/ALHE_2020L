@@ -17,9 +17,9 @@ args = parser.parse_args()
 
 if args.verbose:
     print("Calculating path from {} to {} with algorithm {}. I will store it in {}"
-        .format(args.city_1, args.city_2, args.type, args.output_path)) #   I will store it in {}  , args.type , args.output_path
+        .format(args.city_1, args.city_2, args.type, args.output_path)) 
 
-#  python3 program.py  Kempten Wuerzburg 
+
 aco = ACO(
     args.city_1, 
     args.city_2, 

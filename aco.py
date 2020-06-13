@@ -63,10 +63,9 @@ class ACO:
             if len(unique_paths) != 0:
                 path = min(unique_paths , key = lambda x : x[1])            
                 best_paths.append(path)
-            # jeżeli powtarza się w best weź inny w paths?
-            # evaporate pheromone
+           
             self.pheromones * (1 - self.rho)
-            # print(self.pheromones)
+            
 
         # not choosing duplicated best paths
         best = sorted(best_paths , key = lambda x: x[1])
@@ -82,7 +81,6 @@ class ACO:
 
     def find_path(self, city):
         path = [ city[0] ]
-        #taboo = set()
         taboo = self.pheromones.copy()
         end = city[1]
 
@@ -118,9 +116,9 @@ class ACO:
         dominator = nominator.values.sum()
         prob = nominator / dominator
        
-        if math.isnan(float((prob[0]))):
-          # print(" Error ") 
+        if math.isnan(float((prob[0]))): 
             return -1
+            
         nex = np.random.choice( prob.index.array ,1, p = prob)[0]
         return nex
         
