@@ -1,11 +1,10 @@
-#from aco import *
 import unittest
 
 import aco
 from time import process_time 
 
 
-class TestAco(unittest.TestCase):
+class TestResults(unittest.TestCase):
 
     def test_def_das_qas_less(self): # rho = 0.5
         aco_das = aco.ACO(

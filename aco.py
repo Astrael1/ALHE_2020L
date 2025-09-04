@@ -1,6 +1,4 @@
-import random 
 import numpy as np
-import pandas as pd
 import reader as rd
 import math
 import matplotlib.pyplot as pl
@@ -87,7 +85,7 @@ class ACO:
         prev = city[0]
       
         while True:
-            nex = self.choose(self.pheromones[prev], self.eta[prev],taboo[prev])
+            nex = self.choose_next_city(self.pheromones[prev], self.eta[prev],taboo[prev])
             if self.verbosity >= 2:
                 if nex != -1:
                     print(f"-going to {nex} searching {end}")
@@ -109,7 +107,7 @@ class ACO:
             prev = nex          
         return path
 
-    def choose(self, pheromone , eta, taboo):
+    def choose_next_city(self, pheromone , eta, taboo, seed=None):
       
         ph = np.copy(taboo) 
         nominator = ph ** self.alpha * (eta ** self.beta)
@@ -119,6 +117,8 @@ class ACO:
         if math.isnan(float((prob[0]))): 
             return -1
             
+        if seed != None:
+            np.random.seed(seed)
         nex = np.random.choice( prob.index.array ,1, p = prob)[0]
         return nex
         
