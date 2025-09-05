@@ -1,4 +1,4 @@
-import reader
+import reader as rd
 import argparse
 from time import process_time 
 from aco import *
@@ -23,7 +23,8 @@ if args.verbose:
 aco = ACO(
     args.city_1, 
     args.city_2, 
-    ants_num=args.ants,
+    args.ants,
+    rd.getGraphFromFile("germany50.txt"),
     iteration_num=args.iterations,
     verbosity = args.verbose, 
     shouldVisualize=args.visualize,

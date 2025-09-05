@@ -1,5 +1,5 @@
 import unittest
-
+import reader as rd
 import aco
 from time import process_time 
 
@@ -11,11 +11,13 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 10, 
             type = 'das')
         aco_qas =aco.ACO(
             'Kempten',
             'Wuerzburg' ,
+            graph=rd.getGraphFromFile("germany50.txt"),
             ants_num = 50,
             iteration_num = 10,
             type='qas')
@@ -40,6 +42,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 10, 
             type = 'das',
             rho=0.9)
@@ -47,6 +50,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 10,
             type='qas',
             rho = 0.9)
@@ -71,6 +75,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 10, 
             type = 'das',
             rho=0.0)
@@ -78,6 +83,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 10,
             type='qas',
             rho = 0.0)
@@ -100,7 +106,8 @@ class TestResults(unittest.TestCase):
         aco_das = aco.ACO(
             'Kempten',
             'Wuerzburg' ,
-            ants_num =  50, 
+            ants_num =  50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num= 10,
             type = 'das',
             rho= 0.4,
@@ -110,6 +117,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 10,
             type='qas',
             rho = 0.4,
@@ -134,6 +142,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num =10,
             type = 'das',
             rho = 0.4,
@@ -143,6 +152,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 10,
             type = 'qas',
             rho = 0.4,
@@ -167,6 +177,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num =10,
             type = 'das',
             rho = 0.4,
@@ -176,6 +187,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 10,
             type = 'qas',
             rho = 0.4,
@@ -200,6 +212,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  100,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 20, 
             type = 'das',
             rho = 0)
@@ -207,6 +220,7 @@ class TestResults(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 100,
+            graph=rd.getGraphFromFile("germany50.txt"),
             iteration_num = 20,
             type='qas',
             rho = 0)

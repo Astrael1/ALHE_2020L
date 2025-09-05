@@ -35,16 +35,6 @@ def getGraphFromFile(file_path):
     links = get_links(content)
     edges = [edge_from_link(link, coords) for link in links]
     graph.add_edges_from(edges)
-        
-    # 
-    # distance dataframe
-    df = nx.to_pandas_adjacency(graph, weight='weight', nonedge=np.inf)
-    # beginnine pheromone amount for each city in dataframe
-    pheromone = nx.to_pandas_adjacency(graph, weight='pheromone', nonedge=0)
-  
-    # 
-    # beginning eta amount for each citi in dataframe
-    eta = 1 /df 
     
-    return graph, df , pheromone ,eta , cities
+    return graph
 

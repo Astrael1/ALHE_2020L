@@ -8,7 +8,8 @@ class ACO:
     def __init__(self,
     city1, 
     city2,
-    ants_num, 
+    ants_num,
+    graph,
     type = 'das', 
     qas = 1,
     das = 1,
@@ -16,17 +17,33 @@ class ACO:
     rho = 0.5, 
     alpha = 1, 
     beta = 1, 
-    verbosity = 0, 
-    max_paths=2,
-    shouldVisualize=False):
+    verbosity = 0,
+    shouldVisualize=False,
+    seed=None):
+        """Ant Colony Optimization algorithm to find shortest path between city1 and city2 in given graph
+        city1 - starting city
+        city2 - target city
+        ants_num - number of ants in each iteration
+        graph - networkx graph with edges having 'weight' and 'pheromone' attributes
+        type - type of algorithm to use 'das' - direct ant system, 'qas' - quality ant system
+        qas - constant used in quality ant system to update pheromone
+        das - constant used in direct ant system to update pheromone
+        iteration_num - number of iterations to run
+        rho - pheromone evaporation rate
+        alpha - pheromone importance
+        beta - distance importance
+        verbosity - level of verbosity 0 - silent, 1 - only result, 2 - detailed
+        shouldVisualize - whether to save visualization of algorithm run in 'results/' directory
+        seed - random seed to use in ant decisions (for testing purposes)
+        """
         self.ants_num = ants_num
         self.iteration_num = iteration_num
-        self.rho = rho # pr-stwo wyparowania pheromones
+        self.rho = rho
         self.alpha = alpha
         self.beta = beta
-        self.city1 = city1
-        self.city2 = city2
-        self.graph, self.distances, self.pheromones, self.eta, self.cities = rd.getGraphFromFile("germany50.txt")
+        self.start_city = city1
+        self.target_city = city2
+        self.graph = graph
         self.type = type
         self.q_qas = qas
         self.q_das = das
@@ -34,19 +51,24 @@ class ACO:
         self.max_paths = 2
         self.frame_counter = 0
         self.shouldVisualize = shouldVisualize
+        self.seed = seed
+
+        self.distances = nx.to_pandas_adjacency(self.graph, weight='weight', nonedge=np.inf)
+        self.pheromones = nx.to_pandas_adjacency(self.graph, weight='pheromone', nonedge=0)
+        self.eta = 1 / self.distances
+    
 
 
     def aco_run(self):
         path = None
         best_paths = []
         if self.verbosity >= 2:
-            print(f"Looking for path from {self.city1} to {self.city2}")
+            print(f"Looking for path from {self.start_city} to {self.target_city}")
         for i in range(self.iteration_num):
             if self.verbosity >= 2:
                 print(f"Iteration {i} running:")
             paths = self.find_paths()
-            correct_paths = [path for path in paths if path[0][-1] == self.city2]
-            #print("Iteration {} paths: {}".format(i, correct_paths))
+            correct_paths = [path for path in paths if path[0][-1] == self.target_city]
 
             if(self.shouldVisualize):
                 for path in correct_paths:
@@ -64,63 +86,65 @@ class ACO:
            
             self.pheromones * (1 - self.rho)
             
-
-        # not choosing duplicated best paths
         best = sorted(best_paths , key = lambda x: x[1])
         return best[:self.max_paths]
    
     def find_paths(self):
         paths = []
-        cities = [self.city1, self.city2]
         for i in range(self.ants_num):
-            path = self.find_path(cities)
+            path = self.find_path()
             paths.append((path, self.count_distance(path)))
         return paths 
 
-    def find_path(self, city):
-        path = [ city[0] ]
+    def find_path(self):
+        """ Steps done by single ant to find path from start to end city 
+        taboo - copy of pheromones table where visited cities are marked with 0 to avoid going back
+        """
+        path = [ self.start_city ]
         taboo = self.pheromones.copy()
-        end = city[1]
-
-        prev = city[0]
+        previous_city = self.start_city
       
-        while True:
-            nex = self.choose_next_city(self.pheromones[prev], self.eta[prev],taboo[prev])
+        while self.is_path_not_found(previous_city):
+            next_city = self.choose_next_city(self.eta[previous_city],taboo[previous_city])
             if self.verbosity >= 2:
-                if nex != -1:
-                    print(f"-going to {nex} searching {end}")
+                if next_city != -1:
+                    print(f"-going to {next_city} searching {self.target_city}")
                 else:
                     print("FINISHED")
             # ant could not find the way
-            if nex == -1:
+            if next_city == -1:
+                previous_city = -1
                 break
 
-            if nex == end:
-                path.append(nex)
-                if(self.verbosity >= 2):
-                    print(" Found it ")
-                break
+            path.append(next_city)
+            if next_city != self.target_city:
+                taboo[previous_city][next_city] = 0
+                taboo[next_city][previous_city] = 0
 
-            path.append(nex)
-            taboo[prev][nex] = 0
-            taboo[nex][prev] = 0
-            prev = nex          
+            previous_city = next_city
+
+            if next_city == self.target_city and self.verbosity >= 2:
+                print(" Found it ")     
         return path
 
-    def choose_next_city(self, pheromone , eta, taboo, seed=None):
+    def is_path_not_found(self, previous_city):
+        return previous_city != self.target_city and previous_city != -1
+
+    def choose_next_city(self, eta, taboo, seed=None):
       
-        ph = np.copy(taboo) 
-        nominator = ph ** self.alpha * (eta ** self.beta)
+        pheromone_value = np.copy(taboo) 
+        nominator = pheromone_value ** self.alpha * (eta ** self.beta)
         dominator = nominator.values.sum()
         prob = nominator / dominator
        
         if math.isnan(float((prob[0]))): 
             return -1
-            
-        if seed != None:
-            np.random.seed(seed)
-        nex = np.random.choice( prob.index.array ,1, p = prob)[0]
-        return nex
+        
+        actual_seed = seed if seed != None else self.seed
+        if actual_seed != None:
+            np.random.seed(actual_seed)
+        next_city = np.random.choice( prob.index.array, 1, p = prob)[0]
+        return next_city
         
     def count_distance(self, path):
         total = 0
