@@ -1,8 +1,9 @@
 import numpy as np
-import reader as rd
 import math
 import matplotlib.pyplot as pl
 import networkx as nx
+
+from visualise_frame import VisualizationFrame
 
 class ACO:
     def __init__(self,
@@ -56,6 +57,9 @@ class ACO:
         self.distances = nx.to_pandas_adjacency(self.graph, weight='weight', nonedge=np.inf)
         self.pheromones = nx.to_pandas_adjacency(self.graph, weight='pheromone', nonedge=0)
         self.eta = 1 / self.distances
+        self.frames_to_visualize = []
+
+        VisualizationFrame.set_start_and_target(self.start_city, self.target_city)
     
 
 
@@ -64,19 +68,23 @@ class ACO:
         best_paths = []
         if self.verbosity >= 2:
             print(f"Looking for path from {self.start_city} to {self.target_city}")
-        for i in range(self.iteration_num):
+        for it_number in range(self.iteration_num):
             if self.verbosity >= 2:
-                print(f"Iteration {i} running:")
+                print(f"Iteration {it_number} running:")
             paths = self.find_paths()
             correct_paths = [path for path in paths if path[0][-1] == self.target_city]
 
             if(self.shouldVisualize):
                 for path in correct_paths:
-                    self.visualize(path[0])
+                    frame = VisualizationFrame(self.graph.copy(), path, it_number)
+                    self.frames_to_visualize.append(frame)
+                    self.visualize_path(path[0])
 
             self.update_pheromone(correct_paths)
             if(self.shouldVisualize):
-                self.visualize(None)
+                frame = VisualizationFrame(self.graph.copy(), None, it_number)
+                self.frames_to_visualize.append(frame)
+                self.visualize_path(None)
 
             unique_paths = [path for path in correct_paths if path not in best_paths]
 
@@ -87,7 +95,10 @@ class ACO:
             self.pheromones * (1 - self.rho)
             
         best = sorted(best_paths , key = lambda x: x[1])
-        return best[:self.max_paths]
+        if self.shouldVisualize:
+            return best[:self.max_paths], self.frames_to_visualize
+        else:
+            return best[:self.max_paths], None
    
     def find_paths(self):
         paths = []
@@ -107,25 +118,34 @@ class ACO:
         while self.is_path_not_found(previous_city):
             next_city = self.choose_next_city(self.eta[previous_city],taboo[previous_city])
             if self.verbosity >= 2:
-                if next_city != -1:
-                    print(f"-going to {next_city} searching {self.target_city}")
-                else:
-                    print("FINISHED")
-            # ant could not find the way
-            if next_city == -1:
+                self.report_step(next_city)
+            
+            if self.is_ant_stuck(next_city):
                 previous_city = -1
                 break
 
             path.append(next_city)
             if next_city != self.target_city:
-                taboo[previous_city][next_city] = 0
-                taboo[next_city][previous_city] = 0
+                self.block_visited_edge(taboo, previous_city, next_city)
 
             previous_city = next_city
 
             if next_city == self.target_city and self.verbosity >= 2:
                 print(" Found it ")     
         return path
+
+    def block_visited_edge(self, taboo, previous_city, next_city):
+        taboo[previous_city][next_city] = 0
+        taboo[next_city][previous_city] = 0
+
+    def is_ant_stuck(self, next_city):
+        return next_city == -1
+
+    def report_step(self, next_city):
+        if next_city != -1:
+            print(f"-going to {next_city} searching {self.target_city}")
+        else:
+            print("STUCK")
 
     def is_path_not_found(self, previous_city):
         return previous_city != self.target_city and previous_city != -1
@@ -154,8 +174,8 @@ class ACO:
 
 
     def update_pheromone(self, paths):
-        sort_paths = sorted(paths , key = lambda x: x[1])
-        for path , distance in sort_paths:
+        sorted_paths = sorted(paths , key = lambda x: x[1])
+        for path , _ in sorted_paths:
             for i in range(len(path)-1):
                 city1 = path[i]
                 city2 = path[i+1]
@@ -169,7 +189,7 @@ class ACO:
         for edge in self.graph.edges:
             self.graph.edges[edge]['pheromone'] = self.pheromones[edge[0]][edge[1]]
 
-    def visualize(self, path=None):
+    def visualize_path(self, path=None):
         layout = nx.kamada_kawai_layout(self.graph)
         
         # make directional graph with path to show

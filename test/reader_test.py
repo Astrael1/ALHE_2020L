@@ -1,5 +1,7 @@
+import sys
+sys.path.insert(0, '../src')
 import unittest
-import reader as rd
+import reader as rd # type: ignore
 import pandas as pd
 import networkx as nx
 

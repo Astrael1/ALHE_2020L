@@ -1,5 +1,4 @@
 import networkx as nx
-import numpy as np
 from geopy.distance import geodesic
 
 def get_nodes(file_content):

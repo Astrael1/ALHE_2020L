@@ -1,7 +1,10 @@
+import sys
+sys.path.insert(0, '../src')
+
 import unittest
-import aco
+import aco  # type: ignore
 import numpy as np
-import reader as rd
+import reader as rd # type: ignore
 
 
 class TestAco(unittest.TestCase):
@@ -90,6 +93,35 @@ class TestAco(unittest.TestCase):
         actual_path, actual_dist = paths[0]
         self.assertEqual(actual_path, expected_path)
         self.assertEqual(actual_dist, expected_dist)
+
+    def test_visualise_small(self):
+        aco_das = aco.ACO(
+            self.start_city,
+            self.target_city,
+            ants_num =  50,
+            graph=rd.getGraphFromFile(self.file_path),
+            iteration_num = 10, 
+            type = 'das',
+            shouldVisualize=False,
+            seed=1
+            )
+        aco_das.aco_run()
+        path = ['Koblenz', 'Koeln', 'Duesseldorf', 'Essen', 'Dortmund']
+        aco_das.visualize_path(path)
+
+    def test_visualise_large(self):
+        aco_das = aco.ACO(
+            'Kempten',
+            'Wuerzburg' ,
+            ants_num =  50,
+            graph=rd.getGraphFromFile('../germany50.txt'),
+            iteration_num = 4, 
+            type = 'das',
+            shouldVisualize=True
+            )
+        aco_das.aco_run()
+            
+        
 
 
 
