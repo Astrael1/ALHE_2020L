@@ -7,6 +7,9 @@ class VisualizationFrame:
     start_city: str
     target_city: str
     path: list
+    alpha: float
+    beta: float
+    rho: float
 
     def __init__(self, graph: nx.Graph, path, iteration_nr: int):
         self.serial_number = VisualizationFrame.serial_number
@@ -21,3 +24,9 @@ class VisualizationFrame:
     def set_start_and_target(cls, start_city: str, target_city: str):
         cls.start_city = start_city
         cls.target_city = target_city
+
+    @classmethod
+    def set_algorithm_params(cls, alpha, beta, rho):
+        cls.alpha = alpha
+        cls.beta = beta
+        cls.rho = rho

@@ -62,6 +62,7 @@ class ACO:
         self.frames_to_visualize = []
 
         VisualizationFrame.set_start_and_target(self.start_city, self.target_city)
+        VisualizationFrame.set_algorithm_params(self.alpha, self.beta, self.rho)
     
 
 

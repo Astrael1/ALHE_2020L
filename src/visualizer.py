@@ -1,5 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as pl
+import matplotlib.patches as mpatches
+from matplotlib.widgets import TextBox
+
 
 from visualization_frame import VisualizationFrame
 
@@ -32,19 +35,31 @@ class Visualizer:
             width=edge_width,
             node_shape='o')
         if path != None:
-            path_graph = nx.DiGraph()
-            for i in range(len(path)-1):
-                path_graph.add_edge(path[i], path[i+1])
-            nx.draw_networkx(
+            self.draw_path(path)
+        
+        figtext = f"Iteration: {frame.iteration_nr}\nAlpha: {VisualizationFrame.alpha}, Beta: {VisualizationFrame.beta}, Rho: {VisualizationFrame.rho}\nStart: {VisualizationFrame.start_city}, Target: {VisualizationFrame.target_city}"
+
+        if path == None:
+            figtext += "\nPheromone levels after iteration."
+        else:
+            figtext += f"\nPath found"
+
+        pl.figtext(0.5, 0.01, figtext, wrap=True, fontsize=12, verticalalignment='bottom', horizontalalignment='center')
+
+        pl.savefig('results/'+str(frame.serial_number)+'.png', format='png')
+        pl.close(1)
+
+    def draw_path(self, path):
+        path_graph = nx.DiGraph()
+        for i in range(len(path)-1):
+            path_graph.add_edge(path[i], path[i+1])
+        nx.draw_networkx(
                 path_graph,
                 pos=self.layout, 
                 nodelist=path,
                 with_labels=False,
                 node_color='#ff0000',
                 node_shape='o')
-
-        pl.savefig('results/'+str(frame.serial_number)+'.png', format='png')
-        pl.close(1)
 
     def getEdgeColors(self, graph):
         return [self.pheromoneToColor(edge, graph) for edge in graph.edges]
