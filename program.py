@@ -1,11 +1,12 @@
 import sys
 sys.path.insert(0, '../src')
 
-import reader as rd # type: ignore
+import src.reader as rd # type: ignore
 import argparse
 from time import process_time 
-import aco # type: ignore
+import src.aco as aco # type: ignore
 import os
+import src.visualizer as vz  # type: ignore
 
 parser = argparse.ArgumentParser()
 parser.add_argument("city_1", help='Starting city')
@@ -23,7 +24,7 @@ if args.verbose:
         .format(args.city_1, args.city_2, args.type))
 
 
-aco = ACO(
+aco = aco.ACO(
     args.city_1, 
     args.city_2, 
     args.ants,
@@ -36,10 +37,13 @@ aco = ACO(
     )
 
 t1_start = process_time()  
-solution, _ = aco.aco_run()
+solution, frames = aco.aco_run()
 t1_stop = process_time() 
 if(args.display_time):
     print(t1_stop - t1_start)
 if(args.verbose >=1):
     for path in solution:
         print(path)
+if args.visualize:
+    visualizer = vz.Visualizer(frames)
+    visualizer.generate_images()

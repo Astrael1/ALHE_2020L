@@ -1,9 +1,11 @@
+import sys
+sys.path.insert(0, './src')
+
 import numpy as np
 import math
-import matplotlib.pyplot as pl
 import networkx as nx
 
-from visualise_frame import VisualizationFrame
+from visualization_frame import VisualizationFrame  # type: ignore
 
 class ACO:
     def __init__(self,
@@ -76,15 +78,13 @@ class ACO:
 
             if(self.shouldVisualize):
                 for path in correct_paths:
-                    frame = VisualizationFrame(self.graph.copy(), path, it_number)
+                    frame = VisualizationFrame(self.graph.copy(), path[0], it_number)
                     self.frames_to_visualize.append(frame)
-                    self.visualize_path(path[0])
 
             self.update_pheromone(correct_paths)
             if(self.shouldVisualize):
                 frame = VisualizationFrame(self.graph.copy(), None, it_number)
                 self.frames_to_visualize.append(frame)
-                self.visualize_path(None)
 
             unique_paths = [path for path in correct_paths if path not in best_paths]
 
@@ -92,13 +92,10 @@ class ACO:
                 path = min(unique_paths , key = lambda x : x[1])            
                 best_paths.append(path)
            
-            self.pheromones * (1 - self.rho)
+            self.pheromones *= (1 - self.rho)
             
         best = sorted(best_paths , key = lambda x: x[1])
-        if self.shouldVisualize:
-            return best[:self.max_paths], self.frames_to_visualize
-        else:
-            return best[:self.max_paths], None
+        return best[:self.max_paths], self.frames_to_visualize
    
     def find_paths(self):
         paths = []
@@ -188,74 +185,5 @@ class ACO:
     def update_graph(self):
         for edge in self.graph.edges:
             self.graph.edges[edge]['pheromone'] = self.pheromones[edge[0]][edge[1]]
-
-    def visualize_path(self, path=None):
-        layout = nx.kamada_kawai_layout(self.graph)
-        
-        # make directional graph with path to show
-        
-        edge_colors = self.getEdgeColors(self.graph)
-        edge_width = self.getEdgeWidth(self.graph)
-        
-        # draw
-        pl.figure(1, figsize=(10,10))
-        nx.draw_networkx(
-            self.graph,
-            pos=layout, 
-            with_labels=True,
-            font_size=7,
-            node_color='#ffaa77',
-            edge_color=edge_colors,
-            width=edge_width,
-            node_shape='o')
-        if path != None:
-            path_graph = nx.DiGraph()
-            for i in range(len(path)-1):
-                path_graph.add_edge(path[i], path[i+1])
-            nx.draw_networkx(
-                path_graph,
-                pos=layout, 
-                nodelist=path,
-                with_labels=False,
-                node_color='#ff0000',
-                node_shape='o')
-
-        pl.savefig('results/'+str(self.frame_counter)+'.png', format='png')
-        pl.close(1)
-        self.frame_counter += 1
-
-    def getEdgeColors(self, graph):
-        return [self.pheromoneToColor(edge) for edge in graph.edges]
-    def getEdgeWidth(self, graph):
-        return [self.pheromoneToWidth(edge) for edge in graph.edges]
-
-    def pheromoneToColor(self, edge):
-        pheromone = self.graph[edge[0]][edge[1]]['pheromone']
-        borders = {
-            1: '#cccccc', 
-            2: '#77ca6e',
-            3: '#979b55',
-            4: '#ba6637',
-            5: '#cf4826',
-            6: '#e52815'
-            }
-        for key,value in borders.items():
-            if(pheromone < key): 
-                return value
-        return '#ff0000'
-    def pheromoneToWidth(self, edge):
-        pheromone = self.graph[edge[0]][edge[1]]['pheromone']
-        borders = {
-            1: 1.0, 
-            2: 2.0,
-            3: 3.0,
-            4: 4.0,
-            5: 5.0,
-            6: 6.0
-            }
-        for key,value in borders.items():
-            if(pheromone < key): 
-                return value
-        return 7.0
 
     

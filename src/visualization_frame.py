@@ -1,9 +1,12 @@
 import networkx as nx
 
 class VisualizationFrame:
+    """A class to represent a frame in the visualization of a pathfinding algorithm. 
+    Frame number, start city, target city are kept in class variables."""
     serial_number = 0
     start_city: str
     target_city: str
+    path: list
 
     def __init__(self, graph: nx.Graph, path, iteration_nr: int):
         self.serial_number = VisualizationFrame.serial_number
