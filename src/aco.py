@@ -14,7 +14,7 @@ class ACO:
     ants_num,
     graph,
     type = 'das', 
-    qas = 1,
+    qas = 10,
     das = 1,
     iteration_num = 3,
     rho = 0.5, 
@@ -78,13 +78,13 @@ class ACO:
             correct_paths = [path for path in paths if path[0][-1] == self.target_city]
 
             if(self.shouldVisualize):
-                for path in correct_paths:
-                    frame = VisualizationFrame(self.graph.copy(), path[0], it_number)
+                for i, path in enumerate(correct_paths):
+                    frame = VisualizationFrame(self.graph.copy(), path[0], it_number, i)
                     self.frames_to_visualize.append(frame)
 
             self.update_pheromone(correct_paths)
             if(self.shouldVisualize):
-                frame = VisualizationFrame(self.graph.copy(), None, it_number)
+                frame = VisualizationFrame(self.graph.copy(), None, it_number, None)
                 self.frames_to_visualize.append(frame)
 
             unique_paths = [path for path in correct_paths if path not in best_paths]

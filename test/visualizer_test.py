@@ -30,8 +30,28 @@ class TestVisualizer(unittest.TestCase):
         self.assertGreater(len(frames), 0)
         self.assertEqual(frames[0].iteration_nr, 0)
 
-        visualizer = vz.Visualizer(frames)
+        visualizer = vz.Visualizer(frames, False, False)
         visualizer.generate_images()
+
+    def test_video_generation(self):
+        aco_das = aco.ACO(
+            self.start_city,
+            self.target_city,
+            ants_num =  3,
+            graph=rd.getGraphFromFile(self.file_path),
+            iteration_num = 3, 
+            type = 'das',
+            shouldVisualize=True,
+            seed=1
+            )
+        
+        _, frames = aco_das.aco_run()
+        self.assertIsNotNone(frames)
+        self.assertGreater(len(frames), 0)
+        self.assertEqual(frames[0].iteration_nr, 0)
+
+        visualizer = vz.Visualizer(frames, False, True)
+        visualizer.generate_video()
             
         
 

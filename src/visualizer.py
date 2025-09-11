@@ -1,19 +1,35 @@
 import networkx as nx
 import matplotlib.pyplot as pl
-import matplotlib.patches as mpatches
-from matplotlib.widgets import TextBox
+import numpy as np
+import imageio
+
 
 
 from visualization_frame import VisualizationFrame
 
 class Visualizer:
-    def __init__(self, frames: list):
+    img_width = 10
+    img_height = 10
+    def __init__(self, frames: list, save_images = True, save_video = False):
         self.frames = frames
         self.layout = nx.kamada_kawai_layout(self.frames[0].graph)
+        self.save_images = save_images
+        self.save_video = save_video
+
+
+    def generate_video(self):
+        fps = 1
+        output_filename = './results/aco_video.mp4'
+        video_frames = self.generate_images()
+        imageio.mimwrite(output_filename, video_frames, fps=fps)
+
 
     def generate_images(self):
+        video_frames = []
         for frame in self.frames:
-            self.visualize_frame(frame)
+            video_frames.append(self.visualize_frame(frame))
+        return video_frames
+            
 
     def visualize_frame(self, frame: VisualizationFrame):
         graph = frame.graph
@@ -24,7 +40,7 @@ class Visualizer:
         path = frame.path
         
         # draw
-        pl.figure(1, figsize=(10,10))
+        fig = pl.figure(1, figsize=(self.img_width, self.img_height), dpi=100.0)
         nx.draw_networkx(
             graph,
             pos=self.layout, 
@@ -37,7 +53,8 @@ class Visualizer:
         if path != None:
             self.draw_path(path)
         
-        figtext = f"Iteration: {frame.iteration_nr}\nAlpha: {VisualizationFrame.alpha}, Beta: {VisualizationFrame.beta}, Rho: {VisualizationFrame.rho}\nStart: {VisualizationFrame.start_city}, Target: {VisualizationFrame.target_city}"
+        ant_part = f", Ant: {frame.ant_nr + 1}" if frame.ant_nr != None else ""
+        figtext = f"Iteration: {frame.iteration_nr}{ant_part}\nAlpha: {VisualizationFrame.alpha}, Beta: {VisualizationFrame.beta}, Rho: {VisualizationFrame.rho}\nStart: {VisualizationFrame.start_city}, Target: {VisualizationFrame.target_city}"
 
         if path == None:
             figtext += "\nPheromone levels after iteration."
@@ -45,9 +62,13 @@ class Visualizer:
             figtext += f"\nPath found"
 
         pl.figtext(0.5, 0.01, figtext, wrap=True, fontsize=12, verticalalignment='bottom', horizontalalignment='center')
+        fig.canvas.draw()
+        image = np.array(fig.canvas.renderer.buffer_rgba())
 
-        pl.savefig('results/'+str(frame.serial_number)+'.png', format='png')
+        if self.save_images:
+            pl.savefig('results/'+str(frame.serial_number)+'.png', format='png')
         pl.close(1)
+        return image
 
     def draw_path(self, path):
         path_graph = nx.DiGraph()

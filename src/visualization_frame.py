@@ -11,13 +11,14 @@ class VisualizationFrame:
     beta: float
     rho: float
 
-    def __init__(self, graph: nx.Graph, path, iteration_nr: int):
+    def __init__(self, graph: nx.Graph, path, iteration_nr: int, ant_nr: int):
         self.serial_number = VisualizationFrame.serial_number
         VisualizationFrame.serial_number += 1
 
         self.graph = graph
         self.path = path
         self.iteration_nr = iteration_nr
+        self.ant_nr = ant_nr
 
 
     @classmethod
