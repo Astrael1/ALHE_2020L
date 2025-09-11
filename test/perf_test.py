@@ -1,22 +1,27 @@
-#from aco import *
+import sys
+sys.path.insert(0, '../src')
+import os
 import unittest
-
-import aco
+import reader as rd # type: ignore
+import aco # type: ignore
 from time import process_time 
 
 
-class TestAco(unittest.TestCase):
+class TestResults(unittest.TestCase):
+    file_path = os.getcwd() + '/../germany50.txt'
 
     def test_def_das_qas_less(self): # rho = 0.5
         aco_das = aco.ACO(
             'Kempten',
             'Wuerzburg' ,
             ants_num =  50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 10, 
             type = 'das')
         aco_qas =aco.ACO(
             'Kempten',
             'Wuerzburg' ,
+            graph=rd.getGraphFromFile(self.file_path),
             ants_num = 50,
             iteration_num = 10,
             type='qas')
@@ -41,6 +46,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 10, 
             type = 'das',
             rho=0.9)
@@ -48,6 +54,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 10,
             type='qas',
             rho = 0.9)
@@ -72,6 +79,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 10, 
             type = 'das',
             rho=0.0)
@@ -79,6 +87,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 10,
             type='qas',
             rho = 0.0)
@@ -101,7 +110,8 @@ class TestAco(unittest.TestCase):
         aco_das = aco.ACO(
             'Kempten',
             'Wuerzburg' ,
-            ants_num =  50, 
+            ants_num =  50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num= 10,
             type = 'das',
             rho= 0.4,
@@ -111,6 +121,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 10,
             type='qas',
             rho = 0.4,
@@ -135,6 +146,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num =10,
             type = 'das',
             rho = 0.4,
@@ -144,6 +156,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 10,
             type = 'qas',
             rho = 0.4,
@@ -168,6 +181,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num =10,
             type = 'das',
             rho = 0.4,
@@ -177,6 +191,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 50,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 10,
             type = 'qas',
             rho = 0.4,
@@ -201,6 +216,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num =  100,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 20, 
             type = 'das',
             rho = 0)
@@ -208,6 +224,7 @@ class TestAco(unittest.TestCase):
             'Kempten',
             'Wuerzburg' ,
             ants_num = 100,
+            graph=rd.getGraphFromFile(self.file_path),
             iteration_num = 20,
             type='qas',
             rho = 0)

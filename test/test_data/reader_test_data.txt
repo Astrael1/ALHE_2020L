@@ -1,0 +1,39 @@
+?SNDlib native format; type: network; version: 1.0
+# network germany50
+
+# NODE SECTION
+#
+# <node_id> [(<longitude>, <latitude>)]
+
+NODES (
+  Aachen ( 6.04 50.76 )
+  Dortmund ( 7.45 51.51 )
+  Duesseldorf ( 6.77 51.25 )
+  Essen ( 7.02 51.46 )
+  Koblenz ( 7.52 50.40 )
+  Koeln ( 6.87 50.94 )
+  Wesel ( 6.37 51.39 )
+)
+
+# LINK SECTION
+#
+# <link_id> ( <source> <target> ) <pre_installed_capacity> <pre_installed_capacity_cost> <routing_cost> <setup_cost> ( {<module_capacity> <module_cost>}* )
+
+LINKS (
+  L1 ( Duesseldorf Essen ) 0.00 0.00 0.00 0.00 ( 40.00 3290.00 )
+  L2 ( Dortmund Essen ) 0.00 0.00 0.00 0.00 ( 40.00 3290.00 )
+  L3 ( Wesel Essen ) 0.00 0.00 0.00 0.00 ( 40.00 3290.00 )
+  L4 ( Koeln Duesseldorf ) 0.00 0.00 0.00 0.00 ( 40.00 3290.00 )
+  L5 ( Aachen Koeln ) 0.00 0.00 0.00 0.00 ( 40.00 3290.00 )
+  L6 ( Koblenz Koeln ) 0.00 0.00 0.00 0.00 ( 40.00 3290.00 )
+)
+
+# DEMAND SECTION
+#
+# <demand_id> ( <source> <target> ) <routing_unit> <demand_value> <max_path_length>
+
+DEMANDS (
+  Essen_Duesseldorf ( Essen Duesseldorf ) 1 34.00 UNLIMITED
+  Essen_Koeln ( Essen Koeln ) 1 9.00 UNLIMITED
+  Essen_Dortmund ( Essen Dortmund ) 1 9.00 UNLIMITED
+)
